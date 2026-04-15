@@ -1,11 +1,5 @@
 import type { CSSProperties } from 'react'
-import {
-  buildTreemapLayout,
-  tribeBottomLeftData,
-  tribeBottomRightData,
-  tribeTopData,
-  type HeatmapAsset,
-} from '../data/mockHeatmap'
+import { buildTreemapLayout, heatmapBlocks, type HeatmapAsset } from '../data/mockHeatmap.js'
 
 type TribeCardProps = {
   data: HeatmapAsset[]
@@ -15,6 +9,7 @@ type TribeCardProps = {
 const BLOCK_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0411\u043B\u043E\u043A\u0430'
 const TRIBE_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0422\u0440\u0430\u0439\u0431\u0430'
 const DASHBOARD_CELL_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0410\u0421'
+const EDGE_PERCENT_THRESHOLD = 15
 
 function TribeCard({ data, height }: TribeCardProps) {
   const cells = buildTreemapLayout(data)
@@ -27,6 +22,7 @@ function TribeCard({ data, height }: TribeCardProps) {
 
       <div className="heatmap-grid" style={{ height }}>
         {cells.map((cell) => {
+          const isCompactPercent = cell.normalizedPercent < EDGE_PERCENT_THRESHOLD
           const cellStyle = {
             left: `${cell.x}%`,
             top: `${cell.y}%`,
@@ -37,12 +33,16 @@ function TribeCard({ data, height }: TribeCardProps) {
           return (
             <div className="heatmap-cell-slot" key={cell.id} style={cellStyle}>
               <div className={`heatmap-cell heatmap-cell--${cell.tone}`}>
-                <div className="heatmap-cell-copy">
+                <div className={isCompactPercent ? 'heatmap-cell-copy heatmap-cell-copy--compact' : 'heatmap-cell-copy'}>
                   <span className="heatmap-cell-kicker">{DASHBOARD_CELL_TITLE}</span>
-                  <span className="heatmap-cell-label">{cell.name}</span>
+                  {isCompactPercent ? (
+                    <span className="heatmap-cell-percent heatmap-cell-percent--inline">
+                      {cell.normalizedPercent.toFixed(2)}%
+                    </span>
+                  ) : null}
                 </div>
 
-                <span className="heatmap-cell-percent">{cell.normalizedPercent.toFixed(2)}%</span>
+                {!isCompactPercent ? <span className="heatmap-cell-percent">{cell.normalizedPercent.toFixed(2)}%</span> : null}
               </div>
             </div>
           )
@@ -53,24 +53,26 @@ function TribeCard({ data, height }: TribeCardProps) {
 }
 
 function HeatMapPanel() {
-  const blockCount = 5
-
   return (
     <div className="heatmap-sections-row">
-      {Array.from({ length: blockCount }, (_, idx) => (
-        <section className="heatmap-section" key={`block-${idx + 1}`}>
-          <h1>{BLOCK_TITLE}</h1>
+      {heatmapBlocks.map((block) => {
+        const [topTribe, bottomLeftTribe, bottomRightTribe] = block.tribes
 
-          <div className="heatmap-layout">
-            <TribeCard data={tribeTopData} height={564} />
+        return (
+          <section className="heatmap-section" key={block.id}>
+            <h1>{BLOCK_TITLE}</h1>
 
-            <div className="heatmap-bottom-row">
-              <TribeCard data={tribeBottomLeftData} height={372} />
-              <TribeCard data={tribeBottomRightData} height={372} />
+            <div className="heatmap-layout">
+              <TribeCard data={topTribe.assets} height={564} />
+
+              <div className="heatmap-bottom-row">
+                <TribeCard data={bottomLeftTribe.assets} height={372} />
+                <TribeCard data={bottomRightTribe.assets} height={372} />
+              </div>
             </div>
-          </div>
-        </section>
-      ))}
+          </section>
+        )
+      })}
     </div>
   )
 }

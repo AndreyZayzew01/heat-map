@@ -1,31 +1,82 @@
 const TREEMAP_SIZE = 100;
 const EPSILON = 0.0001;
-export const tribeTopData = [
-    { id: 'ac-01', name: 'AC 01', percent: 50, value: 4 },
-    { id: 'ac-02', name: 'AC 02', percent: 6.25, value: 7 },
-    { id: 'ac-03', name: 'AC 03', percent: 6.25, value: 3 },
-    { id: 'ac-04', name: 'AC 04', percent: 6.25, value: 6 },
-    { id: 'ac-05', name: 'AC 05', percent: 6.25, value: 10 },
-    { id: 'ac-06', name: 'AC 06', percent: 6.25, value: 5 },
-    { id: 'ac-07', name: 'AC 07', percent: 6.25, value: 2 },
-    { id: 'ac-08', name: 'AC 08', percent: 6.25, value: 8 },
-    { id: 'ac-09', name: 'AC 09', percent: 6.25, value: 9 },
-];
-export const tribeBottomLeftData = [
-    { id: 'ac-10', name: 'AC 10', percent: 24, value: 3 },
-    { id: 'ac-11', name: 'AC 11', percent: 18, value: 6 },
-    { id: 'ac-12', name: 'AC 12', percent: 16, value: 4 },
-    { id: 'ac-13', name: 'AC 13', percent: 14, value: 7 },
-    { id: 'ac-14', name: 'AC 14', percent: 12, value: 2 },
-    { id: 'ac-15', name: 'AC 15', percent: 16, value: 8 },
-];
-export const tribeBottomRightData = [
-    { id: 'ac-16', name: 'AC 16', percent: 26, value: 9 },
-    { id: 'ac-17', name: 'AC 17', percent: 18, value: 5 },
-    { id: 'ac-18', name: 'AC 18', percent: 14, value: 7 },
-    { id: 'ac-19', name: 'AC 19', percent: 12, value: 4 },
-    { id: 'ac-20', name: 'AC 20', percent: 15, value: 8 },
-    { id: 'ac-21', name: 'AC 21', percent: 15, value: 3 },
+function createAssets(blockId, tribeId, percents, values) {
+    return percents.map((percent, idx) => ({
+        id: `b${blockId}-t${tribeId}-a${idx + 1}`,
+        percent,
+        value: values[idx],
+    }));
+}
+function createBlock(blockId, top, bottomLeft, bottomRight) {
+    return {
+        id: `block-${blockId}`,
+        tribes: [
+            {
+                id: `block-${blockId}-tribe-top`,
+                assets: createAssets(blockId, 1, top.percents, top.values),
+            },
+            {
+                id: `block-${blockId}-tribe-left`,
+                assets: createAssets(blockId, 2, bottomLeft.percents, bottomLeft.values),
+            },
+            {
+                id: `block-${blockId}-tribe-right`,
+                assets: createAssets(blockId, 3, bottomRight.percents, bottomRight.values),
+            },
+        ],
+    };
+}
+export const heatmapBlocks = [
+    createBlock(1, {
+        percents: [29, 17, 12, 10, 9, 7, 6, 5, 5],
+        values: [4, 7, 3, 6, 10, 5, 2, 8, 9],
+    }, {
+        percents: [25, 19, 17, 14, 13, 12],
+        values: [3, 6, 4, 7, 2, 8],
+    }, {
+        percents: [27, 18, 16, 14, 13, 12],
+        values: [9, 5, 7, 4, 8, 3],
+    }),
+    createBlock(2, {
+        percents: [24, 21, 14, 11, 8, 7, 6, 5, 4],
+        values: [8, 4, 6, 9, 5, 3, 7, 2, 10],
+    }, {
+        percents: [22, 20, 18, 15, 14, 11],
+        values: [4, 8, 6, 2, 7, 5],
+    }, {
+        percents: [23, 19, 17, 16, 14, 11],
+        values: [5, 9, 4, 8, 3, 7],
+    }),
+    createBlock(3, {
+        percents: [31, 16, 13, 10, 8, 7, 6, 5, 4],
+        values: [3, 10, 5, 7, 2, 8, 4, 9, 6],
+    }, {
+        percents: [28, 21, 16, 13, 12, 10],
+        values: [7, 3, 8, 4, 6, 2],
+    }, {
+        percents: [24, 22, 18, 13, 12, 11],
+        values: [8, 5, 9, 3, 7, 4],
+    }),
+    createBlock(4, {
+        percents: [26, 18, 15, 10, 9, 8, 6, 4, 4],
+        values: [9, 5, 4, 8, 6, 3, 10, 2, 7],
+    }, {
+        percents: [24, 18, 17, 16, 14, 11],
+        values: [8, 4, 7, 3, 6, 9],
+    }, {
+        percents: [29, 17, 15, 14, 13, 12],
+        values: [4, 7, 5, 8, 2, 9],
+    }),
+    createBlock(5, {
+        percents: [27, 19, 13, 11, 8, 7, 6, 5, 4],
+        values: [5, 8, 4, 10, 3, 7, 2, 9, 6],
+    }, {
+        percents: [26, 18, 16, 15, 13, 12],
+        values: [2, 7, 4, 8, 5, 9],
+    }, {
+        percents: [25, 21, 16, 15, 12, 11],
+        values: [7, 3, 8, 4, 9, 5],
+    }),
 ];
 function getHeatmapTone(value) {
     if (value >= 8) {

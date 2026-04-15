@@ -9,6 +9,6 @@
     "rootDir": ".",
     "types": ["node", "vite/client"]
   },
-  "include": ["src/**/*.test.ts", "src/data/mockHeatmap.ts"],
+  "include": ["src/**/*.test.ts", "src/**/*.test.tsx", "src/data/mockHeatmap.ts", "src/components/HeatMapPanel.tsx"],
   "exclude": []
 }
