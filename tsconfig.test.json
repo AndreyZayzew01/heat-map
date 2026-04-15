@@ -1,0 +1,14 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+    "allowImportingTsExtensions": false,
+    "noEmit": false,
+    "outDir": "./.test-dist",
+    "rootDir": ".",
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src/**/*.test.ts", "src/data/mockHeatmap.ts"],
+  "exclude": []
+}
