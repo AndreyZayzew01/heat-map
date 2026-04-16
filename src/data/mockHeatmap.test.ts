@@ -38,6 +38,16 @@ function getAreaPercent(cell: TreemapCell) {
   return (cell.width * cell.height) / 100
 }
 
+function getAspectRatio(cell: TreemapCell) {
+  const shortestSide = Math.min(cell.width, cell.height)
+
+  if (shortestSide === 0) {
+    return Number.POSITIVE_INFINITY
+  }
+
+  return Math.max(cell.width, cell.height) / shortestSide
+}
+
 test('allocates half of the tribe area to a 50 percent system', () => {
   const buildTreemapLayout = getBuildTreemapLayout()
 
@@ -109,7 +119,34 @@ test('keeps equal percentages equal after layout calculation', () => {
   assert.ok(Math.abs(getAreaPercent(second) - getAreaPercent(third)) < 0.0001)
 })
 
-test('exports varied block data with percentages for every asset', () => {
+test('keeps small indicators close to a rectangular aspect ratio', () => {
+  const buildTreemapLayout = getBuildTreemapLayout()
+
+  if (!buildTreemapLayout) {
+    assert.fail('Expected buildTreemapLayout to be exported')
+  }
+
+  const cells = buildTreemapLayout([
+    { id: 'ac-1', percent: 39, value: 4 },
+    { id: 'ac-2', percent: 17, value: 7 },
+    { id: 'ac-3', percent: 12, value: 3 },
+    { id: 'ac-4', percent: 10, value: 6 },
+    { id: 'ac-5', percent: 9, value: 10 },
+    { id: 'ac-6', percent: 7, value: 5 },
+    { id: 'ac-7', percent: 6, value: 2 },
+    { id: 'ac-8', percent: 2, value: 8 },
+  ])
+
+  const compactCells = cells.filter((cell) => cell.normalizedPercent < 15)
+
+  assert.ok(compactCells.length > 0)
+
+  for (const cell of compactCells) {
+    assert.ok(getAspectRatio(cell) <= 2.1, `Expected ${cell.id} to stay near 2:1, got ${getAspectRatio(cell)}`)
+  }
+})
+
+test('exports varied block data with percentages that do not exceed 100 per tribe', () => {
   const heatmapBlocks = getHeatmapBlocks()
 
   assert.ok(heatmapBlocks)
@@ -120,6 +157,10 @@ test('exports varied block data with percentages for every asset', () => {
 
     for (const tribe of block.tribes) {
       assert.ok(tribe.assets.length > 0)
+      assert.ok(new Set(tribe.assets.map((asset) => asset.percent)).size > 1)
+
+      const totalPercent = tribe.assets.reduce((sum, asset) => sum + asset.percent, 0)
+      assert.ok(totalPercent <= 100, `Expected ${tribe.id} to stay within 100%, got ${totalPercent}`)
 
       for (const asset of tribe.assets) {
         assert.equal(typeof asset.percent, 'number')
