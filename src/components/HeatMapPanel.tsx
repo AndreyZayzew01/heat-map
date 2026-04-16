@@ -2,6 +2,7 @@ import type { CSSProperties } from 'react'
 import { buildTreemapLayout, type HeatmapAsset, type HeatmapBlock } from '../data/mockHeatmap.js'
 
 type TribeCardProps = {
+  title: string
   data: HeatmapAsset[]
   height: number
 }
@@ -11,19 +12,19 @@ type HeatMapPanelProps = {
 }
 
 const BLOCK_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0411\u043B\u043E\u043A\u0430'
-const TRIBE_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0422\u0440\u0430\u0439\u0431\u0430'
 const DASHBOARD_CELL_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0410\u0421'
 const EDGE_PERCENT_THRESHOLD = 15
 const COMPACT_STACK_WIDTH_THRESHOLD = 32
+const TOP_TRIBE_TITLE = '\u0422\u0440\u0430\u0439\u0431 \u0412\u0435\u0440\u0445\u043D\u0438\u0439'
+const LEFT_TRIBE_TITLE = '\u0422\u0440\u0430\u0439\u0431 \u041B\u0435\u0432\u044B\u0439'
+const RIGHT_TRIBE_TITLE = '\u0422\u0440\u0430\u0439\u0431 \u041F\u0440\u0430\u0432\u044B\u0439'
 
-function TribeCard({ data, height }: TribeCardProps) {
+function TribeCard({ title, data, height }: TribeCardProps) {
   const cells = buildTreemapLayout(data)
 
   return (
     <article className="heatmap-card">
-      <header className="heatmap-card-header">
-        <h2>{TRIBE_TITLE}</h2>
-      </header>
+      <h2 className="heatmap-card-title">{title}</h2>
 
       <div className="heatmap-grid" style={{ height }}>
         {cells.map((cell) => {
@@ -83,11 +84,11 @@ function HeatMapPanel({ blocks }: HeatMapPanelProps) {
             <h1>{BLOCK_TITLE}</h1>
 
             <div className="heatmap-layout">
-              <TribeCard data={topTribe.assets} height={564} />
+              <TribeCard title={TOP_TRIBE_TITLE} data={topTribe.assets} height={564} />
 
               <div className="heatmap-bottom-row">
-                <TribeCard data={bottomLeftTribe.assets} height={372} />
-                <TribeCard data={bottomRightTribe.assets} height={372} />
+                <TribeCard title={LEFT_TRIBE_TITLE} data={bottomLeftTribe.assets} height={372} />
+                <TribeCard title={RIGHT_TRIBE_TITLE} data={bottomRightTribe.assets} height={372} />
               </div>
             </div>
           </section>
