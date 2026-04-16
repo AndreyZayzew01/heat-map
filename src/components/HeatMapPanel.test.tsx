@@ -1,10 +1,11 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { renderToStaticMarkup } from 'react-dom/server'
+import { heatmapBlocks } from '../data/mockHeatmap.js'
 import HeatMapPanel from './HeatMapPanel.js'
 
 test('renders only the AS label and percentages inside cards', () => {
-  const markup = renderToStaticMarkup(<HeatMapPanel />)
+  const markup = renderToStaticMarkup(<HeatMapPanel blocks={heatmapBlocks} />)
 
   assert.ok(markup.includes('\u041d\u0430\u0438\u043c\u0435\u043d\u043e\u0432\u0430\u043d\u0438\u0435 \u0410\u0421'))
   assert.match(markup, /\d+\.\d{2}%/)
@@ -13,7 +14,7 @@ test('renders only the AS label and percentages inside cards', () => {
 })
 
 test('renders percentages below 15 percent inline with the title', () => {
-  const markup = renderToStaticMarkup(<HeatMapPanel />)
+  const markup = renderToStaticMarkup(<HeatMapPanel blocks={heatmapBlocks} />)
 
   assert.match(
     markup,
@@ -21,4 +22,11 @@ test('renders percentages below 15 percent inline with the title', () => {
   )
   assert.match(markup, /class="heatmap-cell-percent heatmap-cell-percent--inline">13\.00%<\/span>/)
   assert.match(markup, /class="heatmap-cell-percent">15\.00%<\/span>/)
+})
+
+test('moves compact percentages onto a separate line for narrow cells', () => {
+  const markup = renderToStaticMarkup(<HeatMapPanel blocks={heatmapBlocks} />)
+
+  assert.match(markup, /heatmap-cell-copy heatmap-cell-copy--compact-stack/)
+  assert.match(markup, /class="heatmap-cell-percent heatmap-cell-percent--stacked">13\.00%<\/span>/)
 })

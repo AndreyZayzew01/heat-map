@@ -30,6 +30,16 @@ function getBuildTreemapLayout() {
     .buildTreemapLayout
 }
 
+function getCreateAssets() {
+  return (heatmapModule as {
+    createAssets?: (
+      blockId: number,
+      tribeId: number,
+      items: Array<Pick<HeatmapAssetInput, 'percent' | 'value'>>,
+    ) => HeatmapAssetInput[]
+  }).createAssets
+}
+
 function getHeatmapBlocks() {
   return (heatmapModule as { heatmapBlocks?: HeatmapBlock[] }).heatmapBlocks
 }
@@ -74,6 +84,30 @@ test('allocates half of the tribe area to a 50 percent system', () => {
   for (const cell of cells.slice(1)) {
     assert.ok(Math.abs(getAreaPercent(cell) - 6.25) < 0.0001)
   }
+})
+
+test('creates assets from coupled percent and value inputs', () => {
+  const createAssets = getCreateAssets()
+
+  if (!createAssets) {
+    assert.fail('Expected createAssets to be exported')
+  }
+
+  const assets = createAssets(1, 1, [
+    { percent: 56, value: 4 },
+    { percent: 14, value: 3 },
+    { percent: 9, value: 6 },
+  ])
+
+  assert.equal(assets.length, 3)
+  assert.deepEqual(
+    assets.map((asset) => ({ percent: asset.percent, value: asset.value })),
+    [
+      { percent: 56, value: 4 },
+      { percent: 14, value: 3 },
+      { percent: 9, value: 6 },
+    ],
+  )
 })
 
 test('normalizes percentages when the tribe total is not 100 percent', () => {
