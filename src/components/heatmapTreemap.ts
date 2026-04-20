@@ -141,7 +141,7 @@ export function createTreemapOptions(
       backgroundColor: 'transparent',
       height,
       margin: 0,
-      spacing: [0, 0, 0, 0],
+      spacing: [4, 4, 4, 4],
       events: {
         load() {
           onChartRender(this)
@@ -210,9 +210,9 @@ export function createTreemapOptions(
       },
       treemap: {
         animation: false,
-        borderRadius: 10,
-        borderWidth: 1,
-        borderColor: 'rgba(202, 30, 30, 0.98)',
+        borderRadius: 8,
+        borderWidth: 4,
+        borderColor: 'rgba(18, 22, 34, 0.92)',
         inactiveOtherPoints: false,
         states: {
           hover: {
