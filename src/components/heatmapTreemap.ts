@@ -172,7 +172,7 @@ export function createTreemapOptions(
         type: 'treemap',
         animation: false,
         allowTraversingTree: false,
-        alternateStartingDirection: false,
+        alternateStartingDirection: true,
         borderRadius: 10,
         clip: false,
         data: points,
@@ -181,8 +181,7 @@ export function createTreemapOptions(
         },
         enableMouseTracking: false,
         inactiveOtherPoints: false,
-        layoutAlgorithm: 'strip',
-        layoutStartingDirection: 'vertical',
+        layoutAlgorithm: 'squarified',
         nodeSizeBy: 'leaf',
         states: {
           hover: {
