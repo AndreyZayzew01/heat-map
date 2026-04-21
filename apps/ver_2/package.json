@@ -9,7 +9,6 @@
     "preview": "node scripts/build.mjs --preview --port 4174"
   },
   "dependencies": {
-    "heat-map-monorepo": "file:../..",
     "highcharts": "^12.6.0",
     "highcharts-react-official": "^3.2.3",
     "react": "^19.2.4",

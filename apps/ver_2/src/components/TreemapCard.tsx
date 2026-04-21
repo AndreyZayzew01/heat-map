@@ -1,7 +1,10 @@
 import { useCallback, useMemo, useState } from 'react'
-import Highcharts from 'highcharts'
-import TreemapModule from 'highcharts/modules/treemap'
-import HighchartsReact from 'highcharts-react-official'
+import * as HighchartsNS from 'highcharts'
+import * as TreemapModuleNS from 'highcharts/modules/treemap'
+import { HighchartsReact } from 'highcharts-react-official'
+
+const Highcharts = (HighchartsNS as unknown as { default?: typeof HighchartsNS }).default ?? HighchartsNS
+const TreemapModule = (TreemapModuleNS as unknown as { default?: unknown }).default ?? TreemapModuleNS
 import type { HeatmapAsset, HeatmapTone } from '../data/mockHeatmap.js'
 import {
   createTreemapOptions,

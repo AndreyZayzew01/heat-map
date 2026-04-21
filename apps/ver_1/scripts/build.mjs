@@ -41,6 +41,7 @@ const buildOptions = {
   entryPoints: ['src/main.tsx'],
   bundle: true,
   format: 'esm',
+  platform: 'browser',
   outdir,
   target: 'es2020',
   jsx: 'automatic',
