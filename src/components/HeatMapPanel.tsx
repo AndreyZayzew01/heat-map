@@ -12,9 +12,6 @@ type HeatMapPanelProps = {
 }
 
 const BLOCK_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0411\u043B\u043E\u043A\u0430'
-const DASHBOARD_CELL_TITLE = '\u041D\u0430\u0438\u043C\u0435\u043D\u043E\u0432\u0430\u043D\u0438\u0435 \u0410\u0421'
-const EDGE_PERCENT_THRESHOLD = 15
-const COMPACT_STACK_WIDTH_THRESHOLD = 32
 const TOP_TRIBE_TITLE = '\u0422\u0440\u0430\u0439\u0431 \u0412\u0435\u0440\u0445\u043D\u0438\u0439'
 const LEFT_TRIBE_TITLE = '\u0422\u0440\u0430\u0439\u0431 \u041B\u0435\u0432\u044B\u0439'
 const RIGHT_TRIBE_TITLE = '\u0422\u0440\u0430\u0439\u0431 \u041F\u0440\u0430\u0432\u044B\u0439'
@@ -28,8 +25,6 @@ function TribeCard({ title, data, height }: TribeCardProps) {
 
       <div className="heatmap-grid" style={{ height }}>
         {cells.map((cell) => {
-          const isCompactPercent = cell.normalizedPercent < EDGE_PERCENT_THRESHOLD
-          const shouldStackCompactPercent = isCompactPercent && cell.width < COMPACT_STACK_WIDTH_THRESHOLD
           const cellStyle = {
             left: `${cell.x}%`,
             top: `${cell.y}%`,
@@ -40,30 +35,11 @@ function TribeCard({ title, data, height }: TribeCardProps) {
           return (
             <div className="heatmap-cell-slot" key={cell.id} style={cellStyle}>
               <div className={`heatmap-cell heatmap-cell--${cell.tone}`}>
-                <div
-                  className={
-                    isCompactPercent
-                      ? shouldStackCompactPercent
-                        ? 'heatmap-cell-copy heatmap-cell-copy--compact-stack'
-                        : 'heatmap-cell-copy heatmap-cell-copy--compact'
-                      : 'heatmap-cell-copy'
-                  }
-                >
-                  <span className="heatmap-cell-kicker">{DASHBOARD_CELL_TITLE}</span>
-                  {isCompactPercent ? (
-                    <span
-                      className={
-                        shouldStackCompactPercent
-                          ? 'heatmap-cell-percent heatmap-cell-percent--stacked'
-                          : 'heatmap-cell-percent heatmap-cell-percent--inline'
-                      }
-                    >
-                      {cell.normalizedPercent.toFixed(2)}%
-                    </span>
-                  ) : null}
+                <div className="heatmap-cell-copy">
+                  <span className="heatmap-cell-kicker" title={cell.name}>{cell.name}</span>
                 </div>
 
-                {!isCompactPercent ? <span className="heatmap-cell-percent">{cell.normalizedPercent.toFixed(2)}%</span> : null}
+                <span className="heatmap-cell-percent">{cell.normalizedPercent.toFixed(2)}%</span>
               </div>
             </div>
           )
