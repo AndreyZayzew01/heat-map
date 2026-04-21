@@ -1,0 +1,61 @@
+<h2>Сравнение визуала treemap-плиток</h2>
+<p class="subtitle">Выберите вариант, который ближе к референсу по зазорам и мягкости теней</p>
+
+<div class="cards">
+  <div class="card" data-choice="a-current" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">A — Текущее состояние</div>
+        <div class="mockup-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:2px;background:#131a2b;padding:8px;border-radius:10px">
+          <div style="height:70px;border-radius:8px;background:linear-gradient(145deg,#5caa76,#243446);box-shadow:0 14px 22px rgba(0,0,0,0.4),0 5px 12px rgba(0,0,0,0.35)"></div>
+          <div style="height:70px;border-radius:8px;background:linear-gradient(145deg,#b58942,#2a3648);box-shadow:0 14px 22px rgba(0,0,0,0.4),0 5px 12px rgba(0,0,0,0.35)"></div>
+          <div style="height:70px;border-radius:8px;background:linear-gradient(145deg,#b56b79,#2a3446);box-shadow:0 14px 22px rgba(0,0,0,0.4),0 5px 12px rgba(0,0,0,0.35)"></div>
+          <div style="grid-column:span 2;height:58px;border-radius:8px;background:linear-gradient(145deg,#5caa76,#243446);box-shadow:0 14px 22px rgba(0,0,0,0.4),0 5px 12px rgba(0,0,0,0.35)"></div>
+          <div style="height:58px;border-radius:8px;background:linear-gradient(145deg,#b58942,#2a3648);box-shadow:0 14px 22px rgba(0,0,0,0.4),0 5px 12px rgba(0,0,0,0.35)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Сильные тени, почти нет читаемого зазора</h3>
+      <p>Плитки выглядят слитыми из-за больших drop-shadow.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="b-recommended" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">B — Рекомендуемый</div>
+        <div class="mockup-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;background:#141b2e;padding:8px;border-radius:10px">
+          <div style="height:70px;border-radius:8px;border:2px solid #141b2e;background:linear-gradient(145deg,#5caa76,#243446);box-shadow:0 8px 16px rgba(0,0,0,0.24),0 3px 8px rgba(8,12,22,0.2)"></div>
+          <div style="height:70px;border-radius:8px;border:2px solid #141b2e;background:linear-gradient(145deg,#b58942,#2a3648);box-shadow:0 8px 16px rgba(0,0,0,0.24),0 3px 8px rgba(8,12,22,0.2)"></div>
+          <div style="height:70px;border-radius:8px;border:2px solid #141b2e;background:linear-gradient(145deg,#b56b79,#2a3446);box-shadow:0 8px 16px rgba(0,0,0,0.24),0 3px 8px rgba(8,12,22,0.2)"></div>
+          <div style="grid-column:span 2;height:58px;border-radius:8px;border:2px solid #141b2e;background:linear-gradient(145deg,#5caa76,#243446);box-shadow:0 8px 16px rgba(0,0,0,0.24),0 3px 8px rgba(8,12,22,0.2)"></div>
+          <div style="height:58px;border-radius:8px;border:2px solid #141b2e;background:linear-gradient(145deg,#b58942,#2a3648);box-shadow:0 8px 16px rgba(0,0,0,0.24),0 3px 8px rgba(8,12,22,0.2)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Явный gap + мягкие тени</h3>
+      <p>Зазоры читаются стабильно, стиль сохраняется.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="c-wide-gap" onclick="toggleSelect(this)">
+    <div class="card-image">
+      <div class="mockup">
+        <div class="mockup-header">C — Широкий gap</div>
+        <div class="mockup-body" style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;background:#141b2e;padding:8px;border-radius:10px">
+          <div style="height:70px;border-radius:8px;border:3px solid #141b2e;background:linear-gradient(145deg,#5caa76,#243446);box-shadow:0 6px 12px rgba(0,0,0,0.2)"></div>
+          <div style="height:70px;border-radius:8px;border:3px solid #141b2e;background:linear-gradient(145deg,#b58942,#2a3648);box-shadow:0 6px 12px rgba(0,0,0,0.2)"></div>
+          <div style="height:70px;border-radius:8px;border:3px solid #141b2e;background:linear-gradient(145deg,#b56b79,#2a3446);box-shadow:0 6px 12px rgba(0,0,0,0.2)"></div>
+          <div style="grid-column:span 2;height:58px;border-radius:8px;border:3px solid #141b2e;background:linear-gradient(145deg,#5caa76,#243446);box-shadow:0 6px 12px rgba(0,0,0,0.2)"></div>
+          <div style="height:58px;border-radius:8px;border:3px solid #141b2e;background:linear-gradient(145deg,#b58942,#2a3648);box-shadow:0 6px 12px rgba(0,0,0,0.2)"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Максимально разнесенные плитки</h3>
+      <p>Чисто, но может потерять плотность и пропорции.</p>
+    </div>
+  </div>
+</div>
