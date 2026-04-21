@@ -209,9 +209,6 @@
 }
 
 .heatmap-highcharts .highcharts-point {
-  filter:
-    drop-shadow(0 8px 14px rgba(0, 0, 0, 0.2))
-    drop-shadow(0 3px 8px rgba(8, 12, 22, 0.16));
   opacity: 1;
   transition: none;
 }
@@ -230,6 +227,51 @@
   justify-content: space-between;
   padding: 10px;
   overflow: hidden;
+  border: 1px solid rgba(125, 133, 163, 0.28);
+  border-radius: 10px;
+  box-sizing: border-box;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -12px 28px rgba(0, 0, 0, 0.22);
+}
+
+.heatmap-overlay-cell::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(130deg, rgba(255, 255, 255, 0.06) 0%, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 50% 50%, var(--cell-glow) 0%, rgba(0, 0, 0, 0) 72%);
+  opacity: 0.92;
+  pointer-events: none;
+}
+
+.heatmap-overlay-cell--critical {
+  --cell-glow: rgba(160, 82, 92, 0.24);
+  border-color: rgba(206, 108, 132, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -12px 28px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(206, 108, 132, 0.18);
+}
+
+.heatmap-overlay-cell--warning {
+  --cell-glow: rgba(214, 158, 54, 0.24);
+  border-color: rgba(214, 176, 78, 0.90);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -12px 28px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(214, 176, 78, 0.18);
+}
+
+.heatmap-overlay-cell--healthy {
+  --cell-glow: rgba(52, 170, 106, 0.24);
+  border-color: rgba(74, 196, 142, 0.90);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -12px 28px rgba(0, 0, 0, 0.22),
+    0 0 0 1px rgba(74, 196, 142, 0.18);
 }
 
 .heatmap-cell-slot {
@@ -308,26 +350,22 @@
   gap: 4px;
 }
 
-.heatmap-cell-copy--compact {
-  flex-direction: row;
-  align-items: center;
-  gap: 0;
-}
-
-.heatmap-cell-copy--compact-stack {
-  align-items: flex-start;
-  gap: 4px;
-}
-
 .heatmap-cell-kicker {
   position: relative;
   z-index: 1;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  overflow: hidden;
   color: rgba(225, 231, 247, 0.84);
-  font-size: 9px;
+  font-size: 11px;
   line-height: 1.15;
   font-weight: 700;
   letter-spacing: 0.1px;
   text-transform: uppercase;
+  overflow-wrap: break-word;
+  hyphens: auto;
 }
 
 .heatmap-cell-label {
@@ -356,27 +394,6 @@
   font-weight: 700;
   letter-spacing: 0.2px;
   backdrop-filter: blur(10px);
-}
-
-.heatmap-cell-percent--inline {
-  margin-left: 8px;
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  font-size: 10px;
-  line-height: 1.15;
-  backdrop-filter: none;
-  white-space: nowrap;
-}
-
-.heatmap-cell-percent--stacked {
-  padding: 0;
-  border-radius: 0;
-  background: transparent;
-  font-size: 10px;
-  line-height: 1.15;
-  backdrop-filter: none;
-  white-space: nowrap;
 }
 
 @media (max-width: 1280px) {

@@ -4,12 +4,12 @@ import TreemapModule from 'highcharts/modules/treemap'
 import HighchartsReact from 'highcharts-react-official'
 import type { HeatmapAsset, HeatmapTone } from '../data/mockHeatmap.js'
 import {
-  DASHBOARD_CELL_TITLE,
   createTreemapOptions,
   createTreemapPoints,
-  getTreemapLabelMode,
   type HeatmapTreemapPoint,
 } from './heatmapTreemap.js'
+
+const OVERLAY_INSET = 4
 
 const initTreemapModule = TreemapModule as unknown as ((highcharts: typeof Highcharts) => void) | undefined
 
@@ -25,11 +25,11 @@ type TreemapCardProps = {
 
 type OverlayCell = {
   id: string
+  name: string
   height: number
   normalizedPercent: number
   tone: HeatmapTone
   width: number
-  widthPercent: number
   x: number
   y: number
 }
@@ -68,11 +68,11 @@ function buildOverlayCells(chart: Highcharts.Chart) {
     return [
       {
         id: pointOptions.id ?? `${shapeArgs.x}-${shapeArgs.y}`,
+        name: pointOptions.name ?? '',
         x: shapeArgs.x,
         y: shapeArgs.y,
         width: shapeArgs.width,
         height: shapeArgs.height,
-        widthPercent: (shapeArgs.width / chart.plotWidth) * 100,
         normalizedPercent: pointOptions.custom.normalizedPercent,
         tone: pointOptions.custom.tone,
       } satisfies OverlayCell,
@@ -127,45 +127,25 @@ function TreemapCard({ title, data, height }: TreemapCardProps) {
 
         <div className="heatmap-chart-overlay" aria-hidden="true">
           {overlayCells.map((cell) => {
-            const labelMode = getTreemapLabelMode(cell.normalizedPercent, cell.widthPercent)
-            const isCompact = labelMode !== 'full'
-            const percentText = `${cell.normalizedPercent.toFixed(2)}%`
+            const insetWidth = Math.max(cell.width - OVERLAY_INSET * 2, 0)
+            const insetHeight = Math.max(cell.height - OVERLAY_INSET * 2, 0)
 
             return (
               <div
-                className="heatmap-overlay-cell"
+                className={`heatmap-overlay-cell heatmap-overlay-cell--${cell.tone}`}
                 key={cell.id}
                 style={{
-                  left: `${cell.x}px`,
-                  top: `${cell.y}px`,
-                  width: `${cell.width}px`,
-                  height: `${cell.height}px`,
+                  left: `${cell.x + OVERLAY_INSET}px`,
+                  top: `${cell.y + OVERLAY_INSET}px`,
+                  width: `${insetWidth}px`,
+                  height: `${insetHeight}px`,
                 }}
               >
-                <div
-                  className={
-                    isCompact
-                      ? labelMode === 'compact-stack'
-                        ? 'heatmap-cell-copy heatmap-cell-copy--compact-stack'
-                        : 'heatmap-cell-copy heatmap-cell-copy--compact'
-                      : 'heatmap-cell-copy'
-                  }
-                >
-                  <span className="heatmap-cell-kicker">{DASHBOARD_CELL_TITLE}</span>
-                  {isCompact ? (
-                    <span
-                      className={
-                        labelMode === 'compact-stack'
-                          ? 'heatmap-cell-percent heatmap-cell-percent--stacked'
-                          : 'heatmap-cell-percent heatmap-cell-percent--inline'
-                      }
-                    >
-                      {percentText}
-                    </span>
-                  ) : null}
+                <div className="heatmap-cell-copy">
+                  <span className="heatmap-cell-kicker">{cell.name}</span>
                 </div>
 
-                {!isCompact ? <span className="heatmap-cell-percent">{percentText}</span> : null}
+                <span className="heatmap-cell-percent">{cell.normalizedPercent.toFixed(2)}%</span>
               </div>
             )
           })}
