@@ -16,31 +16,11 @@ export type HeatmapBlock = {
 
 export type HeatmapTone = 'critical' | 'warning' | 'healthy'
 
-export type HeatmapTreemapCell = HeatmapAsset & {
+export type HeatmapNormalizedAsset = HeatmapAsset & {
   normalizedPercent: number
-  tone: HeatmapTone
-  x: number
-  y: number
-  width: number
-  height: number
-}
-
-type WorkingCell = HeatmapAsset & {
-  normalizedPercent: number
-  area: number
-}
-
-type TreemapBounds = {
-  x: number
-  y: number
-  width: number
-  height: number
 }
 
 type HeatmapAssetDefinition = Omit<HeatmapAsset, 'id'>
-
-const TREEMAP_SIZE = 100
-const EPSILON = 0.0001
 
 export function createAssets(blockId: number, tribeId: number, items: HeatmapAssetDefinition[]) {
   return items.map((item, idx) => ({
@@ -226,7 +206,7 @@ export const heatmapBlocks: HeatmapBlock[] = [
   ),
 ]
 
-function getHeatmapTone(value: number): HeatmapTone {
+export function getHeatmapTone(value: number): HeatmapTone {
   if (value >= 8) {
     return 'healthy'
   }
@@ -238,11 +218,21 @@ function getHeatmapTone(value: number): HeatmapTone {
   return 'critical'
 }
 
+const HEATMAP_TONE_COLOR_MAP: Record<HeatmapTone, string> = {
+  critical: '#8f5260',
+  warning: '#b69143',
+  healthy: '#3ea86c',
+}
+
+export function getHeatmapToneColor(tone: HeatmapTone) {
+  return HEATMAP_TONE_COLOR_MAP[tone]
+}
+
 function sumPercents(items: HeatmapAsset[]) {
   return items.reduce((total, item) => total + Math.max(item.percent, 0), 0)
 }
 
-function normalizePercentages(items: HeatmapAsset[]) {
+export function normalizeHeatmapAssetPercents(items: HeatmapAsset[]): HeatmapNormalizedAsset[] {
   if (items.length === 0) {
     return []
   }
@@ -262,139 +252,4 @@ function normalizePercentages(items: HeatmapAsset[]) {
     ...item,
     normalizedPercent: (Math.max(item.percent, 0) / total) * 100,
   }))
-}
-
-function getCellAspectRatio(width: number, height: number) {
-  const shortestSide = Math.min(width, height)
-
-  if (shortestSide <= 0) {
-    return Number.POSITIVE_INFINITY
-  }
-
-  return Math.max(width, height) / shortestSide
-}
-
-function getTotalArea(items: WorkingCell[]) {
-  return items.reduce((total, item) => total + item.area, 0)
-}
-
-function splitBounds(bounds: TreemapBounds, firstAreaShare: number) {
-  if (bounds.width >= bounds.height) {
-    const firstWidth = bounds.width * firstAreaShare
-
-    return [
-      {
-        x: bounds.x,
-        y: bounds.y,
-        width: firstWidth,
-        height: bounds.height,
-      },
-      {
-        x: bounds.x + firstWidth,
-        y: bounds.y,
-        width: bounds.width - firstWidth,
-        height: bounds.height,
-      },
-    ] as const
-  }
-
-  const firstHeight = bounds.height * firstAreaShare
-
-  return [
-    {
-      x: bounds.x,
-      y: bounds.y,
-      width: bounds.width,
-      height: firstHeight,
-    },
-    {
-      x: bounds.x,
-      y: bounds.y + firstHeight,
-      width: bounds.width,
-      height: bounds.height - firstHeight,
-    },
-  ] as const
-}
-
-function layoutBalancedTreemap(
-  items: WorkingCell[],
-  bounds: TreemapBounds,
-): { cells: HeatmapTreemapCell[]; worstAspectRatio: number } {
-  if (items.length === 0) {
-    return {
-      cells: [],
-      worstAspectRatio: 0,
-    }
-  }
-
-  if (items.length === 1) {
-    const [item] = items
-
-    return {
-      cells: [
-        {
-          ...item,
-          tone: getHeatmapTone(item.value),
-          x: bounds.x,
-          y: bounds.y,
-          width: bounds.width,
-          height: bounds.height,
-        },
-      ],
-      worstAspectRatio: getCellAspectRatio(bounds.width, bounds.height),
-    }
-  }
-
-  const totalArea = getTotalArea(items)
-  let bestLayout: { cells: HeatmapTreemapCell[]; worstAspectRatio: number } | null = null
-  let bestBalanceDiff = Number.POSITIVE_INFINITY
-
-  for (let splitIndex = 1; splitIndex < items.length; splitIndex += 1) {
-    const firstItems = items.slice(0, splitIndex)
-    const secondItems = items.slice(splitIndex)
-    const firstArea = getTotalArea(firstItems)
-    const [firstBounds, secondBounds] = splitBounds(bounds, firstArea / totalArea)
-    const firstLayout = layoutBalancedTreemap(firstItems, firstBounds)
-    const secondLayout = layoutBalancedTreemap(secondItems, secondBounds)
-    const worstAspectRatio = Math.max(firstLayout.worstAspectRatio, secondLayout.worstAspectRatio)
-    const balanceDiff = Math.abs(totalArea / 2 - firstArea)
-
-    if (
-      bestLayout === null ||
-      worstAspectRatio < bestLayout.worstAspectRatio - EPSILON ||
-      (Math.abs(worstAspectRatio - bestLayout.worstAspectRatio) <= EPSILON && balanceDiff < bestBalanceDiff)
-    ) {
-      bestLayout = {
-        cells: [...firstLayout.cells, ...secondLayout.cells],
-        worstAspectRatio,
-      }
-      bestBalanceDiff = balanceDiff
-    }
-  }
-
-  return bestLayout ?? { cells: [], worstAspectRatio: 0 }
-}
-
-function buildWorkingCells(items: HeatmapAsset[]) {
-  return normalizePercentages(items).map((item) => ({
-    ...item,
-    area: (item.normalizedPercent / 100) * TREEMAP_SIZE * TREEMAP_SIZE,
-  }))
-}
-
-export function buildTreemapLayout(items: HeatmapAsset[]) {
-  const workingCells = buildWorkingCells(items)
-
-  if (workingCells.length === 0) {
-    return []
-  }
-
-  const bounds: TreemapBounds = {
-    x: 0,
-    y: 0,
-    width: TREEMAP_SIZE,
-    height: TREEMAP_SIZE,
-  }
-
-  return layoutBalancedTreemap(workingCells, bounds).cells
 }

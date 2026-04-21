@@ -7,9 +7,9 @@ export default defineConfig({
   server: {
     // Bind on all interfaces to avoid localhost IPv4/IPv6 mismatch.
     host: true,
-    port: 5173,
+    port: 5174,
     strictPort: true,
     // Keep a stable dev origin when app is embedded by another host.
-    origin: 'http://127.0.0.1:5173',
+    origin: 'http://127.0.0.1:5174',
   },
 })
